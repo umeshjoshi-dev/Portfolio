@@ -118,6 +118,7 @@ nav.solid {
   font-family:var(--mono); font-size:0.7rem;
   letter-spacing:1px; text-transform:uppercase;
   transition:all 0.25s var(--ease2);
+  cursor:pointer;
 }
 .nav-cv:hover { background:var(--ink); transform:translateY(-1px); }
 
@@ -570,6 +571,48 @@ section { overflow:hidden; }
 }
 .soc-btn:hover .soc-lbl { color:rgba(255,255,255,0.75); }
 
+/* ─── CV MODAL ───────────────────────────── */
+#cv-modal-overlay {
+  display:none; position:fixed; inset:0; z-index:10000;
+  background:rgba(13,13,13,0.6); backdrop-filter:blur(6px);
+  align-items:center; justify-content:center;
+}
+#cv-modal-overlay.open { display:flex; }
+#cv-modal {
+  background:var(--paper); border:1px solid var(--rule);
+  padding:40px 44px; max-width:420px; width:90%;
+  animation:fadeUp 0.3s var(--ease) both;
+}
+.cv-modal-title {
+  font-family:var(--serif); font-size:1.5rem; font-weight:700;
+  color:var(--ink); margin-bottom:6px;
+}
+.cv-modal-title em { font-style:italic; color:var(--accent); }
+.cv-modal-sub {
+  font-family:var(--mono); font-size:0.7rem; letter-spacing:1px;
+  text-transform:uppercase; color:var(--ink3); margin-bottom:28px;
+}
+.cv-modal-btns { display:flex; flex-direction:column; gap:10px; }
+.cv-dl-btn {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 20px; border:1px solid var(--rule);
+  background:var(--white); color:var(--ink);
+  font-family:var(--mono); font-size:0.75rem;
+  letter-spacing:1.5px; text-transform:uppercase;
+  cursor:pointer; text-decoration:none;
+  transition:all 0.25s var(--ease2);
+}
+.cv-dl-btn:hover { background:var(--accent); color:var(--white); border-color:var(--accent); transform:translateX(4px); }
+.cv-dl-btn span { opacity:0.5; font-size:0.65rem; }
+.cv-modal-close {
+  margin-top:20px; width:100%; padding:10px;
+  background:none; border:none; cursor:pointer;
+  font-family:var(--mono); font-size:0.68rem;
+  letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--ink3); transition:color 0.2s;
+}
+.cv-modal-close:hover { color:var(--ink); }
+
 /* ─── FOOTER ─────────────────────────────── */
 footer { background:var(--ink); padding:24px 48px; display:flex; justify-content:space-between; align-items:center; }
 .foot-name { font-family:var(--serif); font-size:0.95rem; font-weight:700; color:var(--white); }
@@ -607,6 +650,27 @@ footer { background:var(--ink); padding:24px 48px; display:flex; justify-content
 <div class="cur" id="cur"></div>
 <div class="cur-ring" id="curR"></div>
 
+<!-- CV DOWNLOAD MODAL -->
+<div id="cv-modal-overlay" onclick="if(event.target===this)closeCVModal()">
+  <div id="cv-modal">
+    <div class="cv-modal-title en">Download <em>CV</em></div>
+    <div class="cv-modal-title de">Lebenslauf <em>herunterladen</em></div>
+    <div class="cv-modal-sub en">Choose your preferred language</div>
+    <div class="cv-modal-sub de">Sprache auswählen</div>
+    <div class="cv-modal-btns">
+      <a href="UmeshJ_CV.pdf" download class="cv-dl-btn">
+        English CV <span>PDF ↓</span>
+      </a>
+      <a href="UmeshJ_Lebenslauf.pdf" download class="cv-dl-btn">
+        Deutscher Lebenslauf <span>PDF ↓</span>
+      </a>
+    </div>
+    <button class="cv-modal-close" onclick="closeCVModal()">
+      <span class="en">✕ Close</span><span class="de">✕ Schließen</span>
+    </button>
+  </div>
+</div>
+
 <!-- NAV -->
 <nav id="nav">
   <span class="nav-logo">Umesh <em>Joshi</em></span>
@@ -622,7 +686,7 @@ footer { background:var(--ink); padding:24px 48px; display:flex; justify-content
       <button class="lbtn on" id="btn-en" onclick="setLang('en')">EN</button>
       <button class="lbtn" id="btn-de" onclick="setLang('de')">DE</button>
     </div>
-    <a class="nav-cv" href="UmeshJ_Lebenslauf_.pdf" download>
+    <a class="nav-cv" href="#" onclick="event.preventDefault();openCVModal()">
       <span class="en">↓ CV</span><span class="de">↓ Lebenslauf</span>
     </a>
   </div>
@@ -1064,7 +1128,7 @@ Seine Leistungen waren stets zu unserer vollen Zufriedenheit, sein Verhalten geg
             <img src="Indeed_Logo___.png" alt="Indeed" style="width:22px;height:22px;object-fit:contain;position:relative;z-index:1;">
             <span class="soc-lbl">Indeed</span>
           </a>
-          <a href="UmeshJ_Lebenslauf_.pdf" download class="soc-btn" title="Download CV">
+          <a href="#" onclick="event.preventDefault();openCVModal()" class="soc-btn" title="Download CV">
             <svg class="stroke-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
@@ -1090,6 +1154,9 @@ function setLang(l){
   document.getElementById('btn-de').classList.toggle('on',l==='de');
   l==='de'?b.classList.add('lang-de'):b.classList.remove('lang-de');
 }
+function openCVModal(){ document.getElementById('cv-modal-overlay').classList.add('open'); }
+function closeCVModal(){ document.getElementById('cv-modal-overlay').classList.remove('open'); }
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeCVModal(); });
 const prog=document.getElementById('prog');
 window.addEventListener('scroll',()=>{ prog.style.width=(scrollY/(document.body.scrollHeight-innerHeight)*100)+'%'; });
 const nav=document.getElementById('nav');
